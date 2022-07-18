@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
 
-const stuffRoutes = require("./routes/stuff");
+const saucesRoutes = require("./routes/sauces");
 const userRoutes = require("./routes/user");
 const bodyParser = require("body-parser");
 const path = require("path");
@@ -30,13 +30,9 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use((req, res) => {
-  res.json({ message: "Votre requête a bien été reçue !" });
-});
-
 app.use(bodyParser.json());
 
-app.use("/api/stuff", stuffRoutes);
+app.use("/api/sauces", saucesRoutes);
 app.use("/api/auth", userRoutes);
 app.use("/images", express.static(path.join(__dirname, "images")));
 
