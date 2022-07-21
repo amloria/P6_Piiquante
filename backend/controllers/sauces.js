@@ -12,10 +12,11 @@ exports.createSauce = (req, res, next) => {
       req.file.filename
     }`,
   });
+
   sauce
     .save()
     .then(() => {
-      res.status(201).json({ message: "Objet enregistré !" });
+      res.status(201).json({ message: "Post saved successfully!" });
     })
     .catch((error) => {
       res.status(400).json({ error });
@@ -42,7 +43,9 @@ exports.modifySauce = (req, res, next) => {
           { _id: req.params.id },
           { ...sauceObject, _id: req.params.id }
         )
-          .then(() => res.status(200).json({ message: "Objet modifié!" }))
+          .then(() =>
+            res.status(200).json({ message: "Updated successfully!" })
+          )
           .catch((error) => res.status(401).json({ error }));
       }
     })
@@ -61,7 +64,7 @@ exports.deleteSauce = (req, res, next) => {
         fs.unlink(`images/${filename}`, () => {
           Sauce.deleteOne({ _id: req.params.id })
             .then(() => {
-              res.status(200).json({ message: "Objet supprimé !" });
+              res.status(200).json({ message: "Deleted !" });
             })
             .catch((error) => res.status(401).json({ error }));
         });
@@ -80,9 +83,7 @@ exports.getOneSauce = (req, res, next) => {
       res.status(200).json(sauce);
     })
     .catch((error) => {
-      res.status(404).json({
-        error: error,
-      });
+      res.status(400).json({ error });
     });
 };
 
@@ -92,8 +93,6 @@ exports.getAllSauces = (req, res, next) => {
       res.status(200).json(sauces);
     })
     .catch((error) => {
-      res.status(400).json({
-        error: error,
-      });
+      res.status(400).json({ error });
     });
 };
