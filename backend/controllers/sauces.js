@@ -2,7 +2,6 @@ const Sauce = require("../models/Sauce");
 const fs = require("fs");
 
 exports.createSauce = (req, res, next) => {
-  console.log("hello!");
   const sauceObject = JSON.parse(req.body.sauce);
   delete sauceObject._id;
   delete sauceObject._userId;
@@ -13,7 +12,6 @@ exports.createSauce = (req, res, next) => {
       req.file.filename
     }`,
   });
-  console.log(sauce);
   sauce
     .save()
     .then(() => {
@@ -96,7 +94,4 @@ exports.getAllSauces = (req, res, next) => {
     .catch((error) => {
       res.status(400).json({ error });
     });
-  if (Sauce == null) {
-    res.status(200).json({ message: "Any sauce to show for the moment.." });
-  }
 };
