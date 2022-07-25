@@ -4,6 +4,8 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
 exports.signup = (req, res, next) => {
+  // regex email
+
   bcrypt
     .hash(req.body.password, 10) // encrypting the password, the algorithm will run 10 times
     .then((hash) => {
@@ -42,6 +44,7 @@ exports.login = (req, res, next) => {
               res.status(200).json({
                 userId: user._id,
                 token: jwt.sign({ userId: user._id }, "RANDOM_TOKEN_SECRET", {
+                  // ATENTION, A CHANGER AUSSI
                   expiresIn: "24h",
                 }),
               });

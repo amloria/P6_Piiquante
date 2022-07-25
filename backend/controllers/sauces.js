@@ -83,7 +83,7 @@ exports.deleteSauce = (req, res, next) => {
         fs.unlink(`images/${filename}`, () => {
           Sauce.deleteOne({ _id: req.params.id })
             .then(() => {
-              res.status(200).json({ message: "Deleted successfully!" });
+              res.status(204).json({ message: "Deleted successfully!" });
             })
             .catch((error) => res.status(401).json({ error }));
         });
@@ -97,41 +97,82 @@ exports.deleteSauce = (req, res, next) => {
 exports.likeSauce = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id })
     .then((sauce) => {
-      res.status(200).json(sauce);
+      // res.status(200).json(sauce);
       const likeStatus = req.body.like;
       switch (likeStatus) {
         case 1:
-          console.log(likeStatus);
-          // // if userId isn't in usersLiked AND like = 1
-          // if (!sauce.usersLiked.includes(req.body.userId) && likeStatus === 1) {
-          //   console.log("true");
-          //   // updating DB
-          Sauce.updateOne(
-            { _id: req.params.id },
-            {
-              $inc: { likes: 1 },
-              $push: { usersLiked: req.body.userId },
-            }
-          )
-            .then(() => {
-              res.status(201).json({ message: "Like +1 !" });
-              console.log(sauce);
-            })
-            .catch((error) => {
-              res.status(400).json({ error });
-            });
+          if (!sauce.usersLiked.includes(req.body.userId)) {
+            // updating DB
+            Sauce.updateOne(
+              { _id: req.params.id },
+              {
+                $inc: { likes: 1 },
+                $push: { usersLiked: req.body.userId },
+              }
+            )
+              .then(() => {
+                res.status(201).json({ message: "Like +1 !" });
+              })
+              .catch((error) => {
+                res.status(400).json({ error });
+              });
+          }
           break;
-        // case -1:
-        //   // instructions ;
-        //   break;
-        // case 0:
-        //   // instructions ;
-        //   break;
-        // default:
-        // //instructions ;
+        case -1:
+          if (!sauce.usersDisliked.includes(req.body.userId)) {
+            // updating DB
+            Sauce.updateOne(
+              { _id: req.params.id },
+              {
+                $inc: { dislikes: 1 },
+                $push: { usersDisliked: req.body.userId },
+              }
+            )
+              .then(() => {
+                res.status(201).json({ message: "Like -1 !" });
+              })
+              .catch((error) => {
+                res.status(400).json({ error });
+              });
+          }
+          break;
+        case 0:
+          if (sauce.usersLiked.includes(req.body.userId)) {
+            // updating DB
+            Sauce.updateOne(
+              { _id: req.params.id },
+              {
+                $inc: { likes: -1 },
+                $pull: { usersLiked: req.body.userId },
+              }
+            )
+              .then(() => {
+                res.status(200).json({ message: "Neutralized !" });
+              })
+              .catch((error) => {
+                res.status(400).json({ error });
+              });
+          }
+          if (sauce.usersDisliked.includes(req.body.userId)) {
+            // updating DB
+            Sauce.updateOne(
+              { _id: req.params.id },
+              {
+                $inc: { dislikes: -1 },
+                $pull: { usersDisliked: req.body.userId },
+              }
+            )
+              .then(() => {
+                res.status(200).json({ message: "Like -1 !" });
+              })
+              .catch((error) => {
+                res.status(400).json({ error });
+              });
+          }
+          break;
+        default:
+          console.log("Default Answer !");
       }
-      // }
-      next();
     })
     .catch((error) => {
       res.status(400).json({ error });

@@ -1,10 +1,14 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
+const helmet = require("helmet");
+
+app.use(helmet);
 
 const dotenv = require("dotenv");
 dotenv.config();
 const mongodb = process.env.mongodb;
+
 mongoose
   .connect(`${mongodb}`, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("Connexion à MongoDB réussie !"))
