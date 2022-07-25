@@ -97,28 +97,43 @@ exports.deleteSauce = (req, res, next) => {
 exports.likeSauce = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id })
     .then((sauce) => {
-      // res.status(200).json(sauce);
-      // if userId isn't in usersLiked AND likes = 1
-      if (!sauce.usersLiked.includes(req.body.userId) && req.body.likes === 0) {
-        console.log("true");
-        // updating DB
-        Sauce.updateOne(
-          { _id: req.params.id },
-          {
-            $inc: { likes: 1 },
-            $push: { usersLiked: req.body.userId },
-          }
-        )
-          .then(() => {
-            res.status(201).json({ message: "Like +1 !" });
-            console.log(sauce);
-          })
-          .catch((error) => {
-            res.status(400).json({ error });
-          });
+      res.status(200).json(sauce);
+      const likeStatus = req.body.like;
+      switch (likeStatus) {
+        case 1:
+          console.log(likeStatus);
+          // // if userId isn't in usersLiked AND like = 1
+          // if (!sauce.usersLiked.includes(req.body.userId) && likeStatus === 1) {
+          //   console.log("true");
+          //   // updating DB
+          Sauce.updateOne(
+            { _id: req.params.id },
+            {
+              $inc: { likes: 1 },
+              $push: { usersLiked: req.body.userId },
+            }
+          )
+            .then(() => {
+              res.status(201).json({ message: "Like +1 !" });
+              console.log(sauce);
+            })
+            .catch((error) => {
+              res.status(400).json({ error });
+            });
+          break;
+        // case -1:
+        //   // instructions ;
+        //   break;
+        // case 0:
+        //   // instructions ;
+        //   break;
+        // default:
+        // //instructions ;
       }
+      // }
+      next();
     })
     .catch((error) => {
-      res.status(404).json({ error });
+      res.status(400).json({ error });
     });
 };
