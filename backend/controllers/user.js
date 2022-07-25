@@ -3,11 +3,22 @@ const jwt = require("jsonwebtoken");
 
 const User = require("../models/User");
 
+const dotenv = require("dotenv");
+dotenv.config();
+const AUTH_TOKEN = process.env.AUTH_TOKEN;
+const BCRYPT_CYCLE = process.env.BCRYPT_CYCLE;
+
+const regexEmail = /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/;
+
 exports.signup = (req, res, next) => {
-  // regex email
+  // const emailUserInput = req.body.email;
+  // // regex email
+  // if (!regexEmail.test(emailUserInput)) {
+  //   return false;
+  // }
 
   bcrypt
-    .hash(req.body.password, 10) // encrypting the password, the algorithm will run 10 times
+    .hash(req.body.password, `${BCRYPT_CYCLE}`) // encrypting the password
     .then((hash) => {
       const user = new User({
         email: req.body.email,
@@ -43,8 +54,7 @@ exports.login = (req, res, next) => {
             } else {
               res.status(200).json({
                 userId: user._id,
-                token: jwt.sign({ userId: user._id }, "RANDOM_TOKEN_SECRET", {
-                  // ATENTION, A CHANGER AUSSI
+                token: jwt.sign({ userId: user._id }, `${AUTH_TOKEN}`, {
                   expiresIn: "24h",
                 }),
               });

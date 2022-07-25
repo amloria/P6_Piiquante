@@ -3,14 +3,25 @@ const mongoose = require("mongoose");
 const app = express();
 const helmet = require("helmet");
 
-app.use(helmet);
+app.use(helmet());
+app.use(function (req, res, next) {
+  res.setHeader("Cross-Origin-Resource-Policy", "same-site"); // it allows images to be loaded
+  next();
+});
 
 const dotenv = require("dotenv");
 dotenv.config();
-const mongodb = process.env.mongodb;
+const DB_USERNAME = process.env.DB_USERNAME;
+const DB_PASSWORD = process.env.DB_PASSWORD;
+const DB_CLUSTER = process.env.DB_CLUSTER;
+const DB_SOURCE = process.env.DB_SOURCE;
+const DB_MECHAN = process.env.DB_MECHAN;
 
 mongoose
-  .connect(`${mongodb}`, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(
+    `mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@${DB_CLUSTER}/${DB_SOURCE}&${DB_MECHAN}`,
+    { useNewUrlParser: true, useUnifiedTopology: true }
+  )
   .then(() => console.log("Connexion à MongoDB réussie !"))
   .catch(() => console.log("Connexion à MongoDB échouée !"));
 
