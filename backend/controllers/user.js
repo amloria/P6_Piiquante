@@ -8,15 +8,14 @@ dotenv.config();
 const AUTH_TOKEN = process.env.AUTH_TOKEN;
 const BCRYPT_CYCLE = process.env.BCRYPT_CYCLE;
 
-const regexEmail = /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/;
+const emailRegex = /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/;
 
 exports.signup = (req, res, next) => {
-  // const emailUserInput = req.body.email;
-  // // regex email
-  // if (!regexEmail.test(emailUserInput)) {
-  //   return false;
-  // }
-
+  const emailUserInput = req.body.email;
+  // regex email
+  if (!emailRegex.test(emailUserInput)) {
+    return false;
+  }
   bcrypt
     .hash(req.body.password, `${BCRYPT_CYCLE}`) // encrypting the password
     .then((hash) => {
