@@ -14,10 +14,11 @@ exports.signup = (req, res, next) => {
   const emailUserInput = req.body.email;
   // regex email
   if (!emailRegex.test(emailUserInput)) {
+    next();
     return false;
   }
   bcrypt
-    .hash(req.body.password, `${BCRYPT_CYCLE}`) // encrypting the password
+    .hash(req.body.password, 10 /* `${BCRYPT_CYCLE}` */) // encrypting the password  // ONLY WORKS WHIT EXPLICIT NUMBER, WHY?
     .then((hash) => {
       const user = new User({
         email: req.body.email,
