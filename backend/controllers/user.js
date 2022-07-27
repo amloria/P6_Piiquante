@@ -14,11 +14,12 @@ exports.signup = (req, res, next) => {
   const emailUserInput = req.body.email;
   // regex email
   if (!emailRegex.test(emailUserInput)) {
-    next();
-    return false;
+    return res
+      .status(401)
+      .json({ message: "Paire identifiant/mot de passe incorrecte" });
   }
   bcrypt
-    .hash(req.body.password, 10 /* `${BCRYPT_CYCLE}` */) // encrypting the password  // ONLY WORKS WHIT EXPLICIT NUMBER, WHY?
+    .hash(req.body.password, parseInt(BCRYPT_CYCLE)) // encrypting the password
     .then((hash) => {
       const user = new User({
         email: req.body.email,
@@ -54,7 +55,7 @@ exports.login = (req, res, next) => {
             } else {
               res.status(200).json({
                 userId: user._id,
-                token: jwt.sign({ userId: user._id }, `${AUTH_TOKEN}`, {
+                token: jwt.sign({ userId: user._id }, AUTH_TOKEN, {
                   expiresIn: "24h",
                 }),
               });
