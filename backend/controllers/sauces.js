@@ -56,7 +56,7 @@ exports.modifySauce = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id })
     .then((sauce) => {
       if (sauce.userId != req.auth.userId) {
-        res.status(401).json({ message: "Not authorized" });
+        res.status(403).json({ message: "Not authorized" });
       } else {
         Sauce.updateOne(
           { _id: req.params.id },
@@ -97,7 +97,6 @@ exports.deleteSauce = (req, res, next) => {
 exports.likeSauce = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id })
     .then((sauce) => {
-      // res.status(200).json(sauce);
       const likeStatus = req.body.like;
       switch (likeStatus) {
         case 1:
@@ -147,7 +146,7 @@ exports.likeSauce = (req, res, next) => {
               }
             )
               .then(() => {
-                res.status(200).json({ message: "Neutralized !" });
+                res.status(200).json({ message: "Like 0 !" });
               })
               .catch((error) => {
                 res.status(400).json({ error });
@@ -163,7 +162,7 @@ exports.likeSauce = (req, res, next) => {
               }
             )
               .then(() => {
-                res.status(200).json({ message: "Like -1 !" });
+                res.status(200).json({ message: "Like 0 !" });
               })
               .catch((error) => {
                 res.status(400).json({ error });
