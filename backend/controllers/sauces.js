@@ -100,7 +100,10 @@ exports.likeSauce = (req, res, next) => {
       const likeStatus = req.body.like;
       switch (likeStatus) {
         case 1:
-          if (!sauce.usersLiked.includes(req.body.userId)) {
+          if (
+            !sauce.usersLiked.includes(req.body.userId) ||
+            !sauce.usersDisliked.includes(req.body.userId)
+          ) {
             // updating DB
             Sauce.updateOne(
               { _id: req.params.id },
@@ -118,7 +121,10 @@ exports.likeSauce = (req, res, next) => {
           }
           break;
         case -1:
-          if (!sauce.usersDisliked.includes(req.body.userId)) {
+          if (
+            !sauce.usersDisliked.includes(req.body.userId) ||
+            !sauce.usersLiked.includes(req.body.userId)
+          ) {
             // updating DB
             Sauce.updateOne(
               { _id: req.params.id },
